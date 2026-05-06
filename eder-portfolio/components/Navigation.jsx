@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const navLinks = [
   { href: '#sobre-mi', label: 'Sobre mí' },
   { href: '#servicios', label: 'Servicios' },
   { href: '#proyectos', label: 'Proyectos' },
+  { href: '#videojuegos', label: 'Juegos' },
   { href: '#contacto', label: 'Contacto' },
 ];
 
@@ -27,6 +28,9 @@ export default function Navigation() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Close menu on link click
+  const handleLinkClick = () => setMenuOpen(false);
+
   return (
     <>
       {/* Scroll progress */}
@@ -46,15 +50,13 @@ export default function Navigation() {
           left: 0,
           right: 0,
           zIndex: 9000,
-          padding: '0 40px',
+          padding: '0 clamp(20px, 4vw, 40px)',
           height: '70px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           transition: 'background 0.4s ease, border-bottom 0.4s ease',
-          background: scrolled
-            ? 'rgba(9, 9, 9, 0.92)'
-            : 'transparent',
+          background: scrolled ? 'rgba(9, 9, 9, 0.92)' : 'transparent',
           backdropFilter: scrolled ? 'blur(12px)' : 'none',
           borderBottom: scrolled
             ? '1px solid var(--border)'
@@ -72,6 +74,7 @@ export default function Navigation() {
             textDecoration: 'none',
             letterSpacing: '0.05em',
             lineHeight: 1,
+            flexShrink: 0,
           }}
         >
           ER
@@ -81,7 +84,7 @@ export default function Navigation() {
         <nav
           style={{
             display: 'flex',
-            gap: '40px',
+            gap: 'clamp(20px, 3vw, 40px)',
             alignItems: 'center',
           }}
           className="hidden md:flex"
@@ -107,13 +110,13 @@ export default function Navigation() {
           style={{
             background: 'none',
             border: 'none',
-            cursor: 'none',
+            cursor: 'pointer',
             display: 'flex',
             flexDirection: 'column',
             gap: '5px',
             padding: '8px',
           }}
-          aria-label="Menu"
+          aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
         >
           {[0, 1, 2].map((i) => (
             <motion.span
@@ -155,10 +158,10 @@ export default function Navigation() {
               background: 'rgba(9,9,9,0.97)',
               backdropFilter: 'blur(16px)',
               borderBottom: '1px solid var(--border)',
-              padding: '32px 40px',
+              padding: 'clamp(24px, 5vw, 32px) clamp(20px, 5vw, 40px)',
               display: 'flex',
               flexDirection: 'column',
-              gap: '28px',
+              gap: '24px',
             }}
           >
             {navLinks.map((link, i) => (
@@ -168,10 +171,10 @@ export default function Navigation() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.07 }}
-                onClick={() => setMenuOpen(false)}
+                onClick={handleLinkClick}
                 style={{
                   fontFamily: 'var(--font-syne), sans-serif',
-                  fontSize: '1.2rem',
+                  fontSize: 'clamp(1rem, 4vw, 1.2rem)',
                   fontWeight: 700,
                   color: 'var(--text)',
                   textDecoration: 'none',
@@ -186,7 +189,7 @@ export default function Navigation() {
               href="mailto:papiploxx@gmail.com"
               className="btn btn-primary"
               style={{ alignSelf: 'flex-start', marginTop: '8px' }}
-              onClick={() => setMenuOpen(false)}
+              onClick={handleLinkClick}
             >
               Trabajemos Juntos
             </a>

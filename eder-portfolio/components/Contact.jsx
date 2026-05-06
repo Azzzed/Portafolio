@@ -13,21 +13,60 @@ export default function Contact() {
     message: '',
   });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (error) setError('');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const subject = encodeURIComponent(
-      `Proyecto web - ${formData.business || formData.name}`
-    );
-    const body = encodeURIComponent(
-      `Hola Eder,\n\nMi nombre es ${formData.name}.\n\nNegocio: ${formData.business}\nEmail: ${formData.email}\n\nMensaje:\n${formData.message}`
-    );
-    window.location.href = `mailto:papiploxx@gmail.com?subject=${subject}&body=${body}`;
-    setSubmitted(true);
+    setLoading(true);
+    setError('');
+
+    try {
+      /*
+       * ─── Web3Forms ────────────────────────────────────────────────────
+       * Para recibir correos en papiploxx@gmail.com:
+       * 1. Ve a https://web3forms.com
+       * 2. Ingresa tu email y obtén tu clave GRATIS
+       * 3. Reemplaza 'TU_CLAVE_AQUI' con tu access key
+       * ─────────────────────────────────────────────────────────────────
+       */
+      const ACCESS_KEY = 'bf13189c-06d3-4519-9eec-598be8af530b'; // ← reemplaza esto
+
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          access_key: ACCESS_KEY,
+          from_name: 'Portfolio de Eder Roa',
+          subject: `Nuevo contacto — ${formData.business || formData.name}`,
+          name: formData.name,
+          email: formData.email,
+          message: `Negocio: ${formData.business || 'No especificado'}\nEmail de respuesta: ${formData.email}\n\n${formData.message}`,
+          botcheck: false,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setSubmitted(true);
+      } else {
+        setError(
+          'Error al enviar el mensaje. Por favor escríbeme directamente a papiploxx@gmail.com'
+        );
+      }
+    } catch {
+      setError(
+        'Error de conexión. Por favor escríbeme directamente a papiploxx@gmail.com'
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const contactItems = [
@@ -112,7 +151,7 @@ export default function Contact() {
             animate={inView ? { opacity: 1 } : {}}
             transition={{ duration: 0.6 }}
           >
-            05
+            06
           </motion.span>
           <motion.div
             initial={{ scaleX: 0 }}
@@ -138,7 +177,7 @@ export default function Contact() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
             gap: 'clamp(40px, 6vw, 80px)',
             alignItems: 'start',
           }}
@@ -151,7 +190,7 @@ export default function Contact() {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.1, duration: 0.8 }}
               style={{
-                fontSize: 'clamp(2.5rem, 5vw, 4rem)',
+                fontSize: 'clamp(2rem, 5vw, 4rem)',
                 fontWeight: 700,
                 lineHeight: 1.05,
                 color: 'var(--text)',
@@ -169,7 +208,7 @@ export default function Contact() {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.2, duration: 0.7 }}
               style={{
-                fontSize: '0.95rem',
+                fontSize: 'clamp(0.88rem, 2vw, 0.95rem)',
                 lineHeight: 1.75,
                 color: 'var(--text-muted)',
                 marginBottom: '44px',
@@ -196,7 +235,7 @@ export default function Contact() {
                 <div
                   key={i}
                   style={{
-                    padding: '20px 24px',
+                    padding: 'clamp(14px, 2.5vw, 20px) clamp(16px, 3vw, 24px)',
                     borderBottom:
                       i < contactItems.length - 1
                         ? '1px solid var(--border)'
@@ -209,7 +248,7 @@ export default function Contact() {
                   <span style={{ color: 'var(--accent)', flexShrink: 0 }}>
                     {item.icon}
                   </span>
-                  <div>
+                  <div style={{ minWidth: 0 }}>
                     <div
                       className="section-tag"
                       style={{ marginBottom: '3px' }}
@@ -219,16 +258,15 @@ export default function Contact() {
                     {item.href ? (
                       <a
                         href={item.href}
-                        target={
-                          item.href.startsWith('http') ? '_blank' : undefined
-                        }
+                        target={item.href.startsWith('http') ? '_blank' : undefined}
                         rel="noopener noreferrer"
                         style={{
-                          fontSize: '0.9rem',
+                          fontSize: 'clamp(0.82rem, 2vw, 0.9rem)',
                           color: 'var(--text)',
                           textDecoration: 'none',
                           fontWeight: 500,
                           transition: 'color 0.2s',
+                          wordBreak: 'break-all',
                         }}
                         onMouseEnter={(e) =>
                           (e.target.style.color = 'var(--accent)')
@@ -242,7 +280,7 @@ export default function Contact() {
                     ) : (
                       <span
                         style={{
-                          fontSize: '0.9rem',
+                          fontSize: 'clamp(0.82rem, 2vw, 0.9rem)',
                           color: 'var(--text)',
                           fontWeight: 500,
                         }}
@@ -265,7 +303,7 @@ export default function Contact() {
             {submitted ? (
               <div
                 style={{
-                  padding: '60px 40px',
+                  padding: 'clamp(40px, 8vw, 60px) clamp(24px, 5vw, 40px)',
                   border: '1px solid var(--border)',
                   textAlign: 'center',
                   display: 'flex',
@@ -277,7 +315,7 @@ export default function Contact() {
                 <span style={{ fontSize: '2.5rem' }}>✓</span>
                 <h3
                   className="font-display"
-                  style={{ fontSize: '1.8rem', fontWeight: 600 }}
+                  style={{ fontSize: 'clamp(1.4rem, 4vw, 1.8rem)', fontWeight: 600 }}
                 >
                   ¡Mensaje enviado!
                 </h3>
@@ -298,8 +336,8 @@ export default function Contact() {
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '32px',
-                  padding: '40px',
+                  gap: '28px',
+                  padding: 'clamp(24px, 5vw, 40px)',
                   border: '1px solid var(--border)',
                   background: 'var(--bg-card)',
                 }}
@@ -376,18 +414,38 @@ export default function Contact() {
                   />
                 </div>
 
-                <button type="submit" className="btn btn-primary">
-                  Enviar mensaje
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
+                {/* Error message */}
+                {error && (
+                  <p
+                    style={{
+                      fontSize: '0.82rem',
+                      color: '#f87171',
+                      lineHeight: 1.5,
+                    }}
                   >
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
+                    {error}
+                  </p>
+                )}
+
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={loading}
+                  style={{ opacity: loading ? 0.6 : 1 }}
+                >
+                  {loading ? 'Enviando...' : 'Enviar mensaje'}
+                  {!loading && (
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  )}
                 </button>
               </form>
             )}

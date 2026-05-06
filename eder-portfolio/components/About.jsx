@@ -3,12 +3,49 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 
-const skills = [
-  { category: 'Backend', items: ['Java · Spring Boot', 'PHP · Laravel', 'Node.js', 'Python'] },
-  { category: 'Frontend', items: ['JavaScript', 'React', 'HTML / CSS', 'Next.js'] },
-  { category: 'Datos & BD', items: ['MySQL', 'MongoDB', 'PostgreSQL', 'Análisis de datos'] },
-  { category: 'Creative', items: ['Blender 3D', 'Sprites 2D', 'Rendering', 'C# · Unity'] },
-  { category: 'Expertise', items: ['Arquitectura de software', 'Seguridad informática', 'APIs REST', 'Inglés'] },
+const DEVICON_BASE =
+  'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons';
+
+const skillGroups = [
+  {
+    category: 'Backend',
+    items: [
+      { name: 'Java', icon: 'java/java-original' },
+      { name: 'Spring', icon: 'spring/spring-original' },
+      { name: 'PHP', icon: 'php/php-original' },
+      { name: 'Laravel', icon: 'laravel/laravel-original' },
+      { name: 'Node.js', icon: 'nodejs/nodejs-original' },
+      { name: 'Python', icon: 'python/python-original' },
+    ],
+  },
+  {
+    category: 'Frontend',
+    items: [
+      { name: 'JavaScript', icon: 'javascript/javascript-original' },
+      { name: 'React', icon: 'react/react-original' },
+      { name: 'Next.js', icon: 'nextjs/nextjs-original' },
+      { name: 'HTML5', icon: 'html5/html5-original' },
+      { name: 'CSS3', icon: 'css3/css3-original' },
+      { name: 'Tailwind', icon: 'tailwindcss/tailwindcss-original' },
+    ],
+  },
+  {
+    category: 'Bases de Datos',
+    items: [
+      { name: 'MySQL', icon: 'mysql/mysql-original' },
+      { name: 'MongoDB', icon: 'mongodb/mongodb-original' },
+      { name: 'PostgreSQL', icon: 'postgresql/postgresql-original' },
+    ],
+  },
+  {
+    category: 'Creativo & Herramientas',
+    items: [
+      { name: 'Unity', icon: 'unity/unity-original' },
+      { name: 'C#', icon: 'csharp/csharp-original' },
+      { name: 'Blender', icon: 'blender/blender-original' },
+      { name: 'Git', icon: 'git/git-original' },
+    ],
+  },
 ];
 
 const stats = [
@@ -44,6 +81,22 @@ function FadeIn({ children, delay = 0, direction = 'up' }) {
     >
       {children}
     </motion.div>
+  );
+}
+
+function SkillIcon({ name, icon }) {
+  return (
+    <div className="skill-icon-item">
+      <img
+        src={`${DEVICON_BASE}/${icon}.svg`}
+        alt={name}
+        loading="lazy"
+        onError={(e) => {
+          e.currentTarget.style.display = 'none';
+        }}
+      />
+      <span className="skill-icon-label">{name}</span>
+    </div>
   );
 }
 
@@ -100,7 +153,7 @@ export default function About() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
             gap: 'clamp(40px, 6vw, 80px)',
             alignItems: 'start',
           }}
@@ -111,7 +164,7 @@ export default function About() {
               <h2
                 className="font-display"
                 style={{
-                  fontSize: 'clamp(2.2rem, 4vw, 3.4rem)',
+                  fontSize: 'clamp(2rem, 4vw, 3.4rem)',
                   fontWeight: 600,
                   lineHeight: 1.15,
                   color: 'var(--text)',
@@ -126,7 +179,7 @@ export default function About() {
               </h2>
               <p
                 style={{
-                  fontSize: '0.95rem',
+                  fontSize: 'clamp(0.88rem, 2vw, 0.95rem)',
                   lineHeight: 1.8,
                   color: 'var(--text-muted)',
                   marginBottom: '20px',
@@ -139,7 +192,7 @@ export default function About() {
               </p>
               <p
                 style={{
-                  fontSize: '0.95rem',
+                  fontSize: 'clamp(0.88rem, 2vw, 0.95rem)',
                   lineHeight: 1.8,
                   color: 'var(--text-muted)',
                 }}
@@ -167,14 +220,14 @@ export default function About() {
                     key={i}
                     style={{
                       background: 'var(--bg)',
-                      padding: '28px 20px',
+                      padding: 'clamp(16px, 3vw, 28px) clamp(8px, 2vw, 20px)',
                       textAlign: 'center',
                     }}
                   >
                     <div
                       className="font-display"
                       style={{
-                        fontSize: '2.2rem',
+                        fontSize: 'clamp(1.6rem, 4vw, 2.2rem)',
                         fontWeight: 700,
                         color: 'var(--text)',
                         lineHeight: 1,
@@ -185,9 +238,9 @@ export default function About() {
                     </div>
                     <div
                       style={{
-                        fontSize: '0.62rem',
+                        fontSize: 'clamp(0.5rem, 1.2vw, 0.62rem)',
                         color: 'var(--text-muted)',
-                        letterSpacing: '0.1em',
+                        letterSpacing: '0.08em',
                         textTransform: 'uppercase',
                         fontWeight: 600,
                         lineHeight: 1.4,
@@ -201,24 +254,23 @@ export default function About() {
             </FadeIn>
           </div>
 
-          {/* Right: skills */}
+          {/* Right: skills with logos */}
           <FadeIn delay={0.2} direction="left">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-              {skills.map((group, gi) => (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+              {skillGroups.map((group, gi) => (
                 <div key={gi}>
                   <span
                     className="section-tag"
-                    style={{ marginBottom: '12px', display: 'block' }}
+                    style={{ marginBottom: '14px', display: 'block' }}
                   >
                     {group.category}
                   </span>
                   <div
-                    style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}
+                    className="skill-icon-grid"
+                    style={{ paddingLeft: '2px' }}
                   >
                     {group.items.map((item, ii) => (
-                      <span key={ii} className="skill-tag">
-                        {item}
-                      </span>
+                      <SkillIcon key={ii} name={item.name} icon={item.icon} />
                     ))}
                   </div>
                 </div>
